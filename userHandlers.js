@@ -37,7 +37,6 @@ const database = require("./database");
       [firstname, lastname, email, city, language]
       )
       .then(([result]) => {
-        console.log(result);
         res.location(`/api/users/${result.insertId}`).sendStatus(201);
       })
       .catch((err)=>{
@@ -46,8 +45,30 @@ const database = require("./database");
       });
     }
   
+  const updateUser = (req, res) => {
+    const id = parseInt(req.params.id);
+    const { firstname, lastname, email, city, language} = req.body;
+
+    database
+    .query(`UPDATE users SET firstname=?, lastname=?, email=?, city=?, language=? WHERE id=?`,
+    [firstname, lastname, email, city, language, id]
+    )
+    .then(([result]) => {
+      if(result.affectedRows === 0) {
+        res.status(404).send("User not Found");
+      } else {
+        res.sendStatus(204)
+      }
+    })
+    .catch((err)=>{
+      console.error(err);
+      res.status(500).send("Error updating user");
+    });
+  }
+
   module.exports = {
     getUsers,
     getUserById,
     postUser,
+    updateUser,
   };
