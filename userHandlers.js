@@ -66,9 +66,30 @@ const database = require("./database");
     });
   }
 
+  const deleteUser = (req, res) => {
+    const id = parseInt(req.params.id);
+
+    database
+    .query(`DELETE FROM users where id=?`,
+    [id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows == 0) {
+        res.status(404).send("User not Found");
+        } else {
+          res.status(204).send('Success;)')
+      }
+    })
+    .catch((err)=>{
+      console.error(err);
+      res.status(500).send("Error deleting user");
+    })
+  }
+
   module.exports = {
     getUsers,
     getUserById,
     postUser,
     updateUser,
+    deleteUser,
   };
